@@ -89,5 +89,4 @@ class DocumentManagerTest {
         //then
         assertTrue(obtainedDocument.isEmpty());
     }
-
 }

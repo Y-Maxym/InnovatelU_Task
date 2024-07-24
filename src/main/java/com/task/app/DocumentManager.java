@@ -1,6 +1,7 @@
 package com.task.app;
 
 import com.task.app.repository.DocumentRepository;
+import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 import java.util.List;
@@ -9,14 +10,19 @@ import java.util.UUID;
 
 import static java.util.Objects.isNull;
 
+@RequiredArgsConstructor
 public class DocumentManager {
 
     private final DocumentRepository repository;
 
-    public DocumentManager(DocumentRepository repository) {
-        this.repository = repository;
-    }
-
+    /**
+     * Upsert the document to your storage
+     * And generate unique id if it does not exist
+     *
+     * @param document - document content and author data
+     * @return saved document
+     */
+    @SuppressWarnings("all")
     public Document save(Document document) {
         if (isNull(document.getId()) || document.getId().isBlank()) {
             String uuid = UUID.randomUUID().toString();
@@ -26,6 +32,12 @@ public class DocumentManager {
         return document;
     }
 
+    /**
+     * Find documents which match with request
+     *
+     * @param request - search request, each field could be null
+     * @return list matched documents
+     */
     public List<Document> search(SearchRequest request) {
         return repository.findAll().stream()
                 .filter(doc -> filterByTitlePrefixes(doc, request.getTitlePrefixes()))
@@ -36,6 +48,12 @@ public class DocumentManager {
                 .toList();
     }
 
+    /**
+     * Find document by id
+     *
+     * @param id - document id
+     * @return optional document
+     */
     public Optional<Document> findById(String id) {
         return repository.findById(id);
     }
